@@ -194,7 +194,8 @@ CREATE TABLE sc_users (
   email varchar(50) NOT NULL DEFAULT '',
   homepage varchar(255) DEFAULT NULL,
   uContent text,
-  privateKey varchar(33) DEFAULT NULL
+  privateKey varchar(33) DEFAULT NULL,
+  bLastDelete timestamp with time zone DEFAULT now() NOT NULL
 );
 
 CREATE UNIQUE INDEX privateKey on sc_users (privateKey);
@@ -225,6 +226,7 @@ CREATE TABLE sc_users_sslclientcerts (
 CREATE TABLE sc_version (
   schema_version integer NOT NULL
 );
+INSERT INTO sc_version (schema_version) VALUES (7);
 
 --
 -- Table structure for table "sc_votes"
