@@ -1001,6 +1001,17 @@ class SemanticScuttle_Service_Bookmark extends SemanticScuttle_DbService
             );
         }
 
+        // update ´last_delete´ date
+        $userservice = SemanticScuttle_Service_Factory::get('User');
+        $uId = $userservice->getCurrentUserId();
+        if( !$this->updateLastDelete($uId) ) {
+            $this->db->sql_transaction('rollback');
+            message_die(
+                GENERAL_ERROR, 'Could not update the time of the last deletion',
+                '', __LINE__, __FILE__, $query, $this->db
+            );
+        }
+
         $this->db->sql_transaction('commit');
 
         return true;
@@ -1027,7 +1038,67 @@ class SemanticScuttle_Service_Bookmark extends SemanticScuttle_DbService
             );
         }
 
+        // update ´last_delete´ date
+        if( !$this->updateLastDelete($uId) ) {
+            message_die(
+                GENERAL_ERROR, 'Could not update the time of the last deletion',
+                '', __LINE__, __FILE__, $query, $this->db
+            );
+        }
+
         return true;
+    }
+
+
+    /**
+     * Update Timestamp of last deletion to current timestamp
+     *
+     * @param integer $uId User ID
+     *
+     * @return boolean true when all went well
+     */
+    private function updateLastDelete($uId)
+    {
+        $deldatetime = gmdate('Y-m-d H:i:s', time());
+
+        $updates = array(
+            'bLastDelete'    => $deldatetime,
+        );
+
+        $query = 'UPDATE '. $GLOBALS['tableprefix'] . 'users'
+                 . ' SET '. $this->db->sql_build_array('UPDATE', $updates)
+                 . ' WHERE uId = ' . intval($uId);
+
+        if (!($dbresult = $this->db->sql_query($query))) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Get the timestamp of the last deletion
+     * Used for the ´posts_update´ API-function if last deletion is
+     * more recent than last modification of an existing bookmark
+     *
+     * @param integer $uId User ID
+     *
+     * @return string representing the time, parsable with strtotime()
+     */
+    public function getLastDelete($uId)
+    {
+        $query = 'SELECT bLastDelete as lastDelete'
+                 . ' FROM '. $GLOBALS['tableprefix'] . 'users'
+                 . ' WHERE uId = ' . intval($uId);
+
+        if (!($dbresult = $this->db->sql_query($query))) {
+            message_die(
+                GENERAL_ERROR, 'Could not get LastDelete', '',
+                __LINE__, __FILE__, $sql, $this->db
+            );
+        }
+
+        return $this->db->sql_fetchfield(0, 0);
     }
 
 
