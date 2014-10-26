@@ -375,6 +375,12 @@ TXT;
         //all should be well
         $this->assertEquals(200, $res->getStatus());
 
+        //get date
+        $data = $this->bs->getBookmarks(0, null, $uId);
+        $creationDate = $data['bookmarks'][0]['bDatetime'];
+        $modificationDate = $data['bookmarks'][0]['bModified'];
+        sleep(1); //wait 1 second to detect change in modification time
+
         //send it a second time, with different title
         list($req, $dummy) = $this->getAuthRequest();
         $req->setMethod(HTTP_Request2::METHOD_POST);
@@ -405,6 +411,9 @@ TXT;
         $data = $this->bs->getBookmarks(0, null, $uId);
         $this->assertEquals(1, $data['total']);
         $this->assertEquals($title2, $data['bookmarks'][0]['bTitle']);
+        // creation date should be unchanged and modification date should be newer
+        $this->assertEquals($creationDate, $data['bookmarks'][0]['bDatetime'], "Creation date must not be updated, when replacing a bookmark.");
+        $this->assertGreaterThan($modificationDate, $data['bookmarks'][0]['bModified'], "Modification date must be updated, when replacing a bookmark.");
     }
 
 
