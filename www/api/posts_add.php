@@ -68,7 +68,7 @@ if (isset($_REQUEST['extended']) && (trim($_REQUEST['extended']) != '')) {
 if (isset($_REQUEST['tags']) && (trim($_REQUEST['tags']) != '')
     && (trim($_REQUEST['tags']) != ',')
 ) {
-    $tags = trim($_REQUEST['tags']);
+    $tags = trim(urldecode($_REQUEST['tags']));
 } else {
     $tags = null;
 }
@@ -123,12 +123,13 @@ if (is_null($url)) {
             header('HTTP/1.0 409 Conflict');
             $msg = 'bookmark does already exist';
         } else {
-            //delete it before we re-add it
+            //edit bookmark instead
             $bookmark = $bs->getBookmarkByAddress($url, false);
-            $bId      = $bookmark['bId'];
-            $bs->deleteBookmark($bId);
-
-            $exists = false;
+            $bId = intval($bookmark['bId']);
+            $updated = $bs->updateBookmark(
+                $bId, $url, $description, $extended, '', $status, $tags, null, null, true
+            );
+            $msg = 'done';
         }
     }
 
