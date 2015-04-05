@@ -34,25 +34,31 @@ require_once 'httpauth.inc.php';
 
 // parameter "datemode=modified" will get last modified date
 // instead of last created date
-$orderby   = null;
-$timeField = 'bDatetime';
-if (isset($_GET['datemode']) && $_GET['datemode'] == 'modified') {
-    $orderby = 'modified_desc';
-    $timeField = 'bModified';
+$orderby = 'modified_desc';
+$timeField = 'bModified';
+if (isset($_GET['datemode']) && $_GET['datemode'] == 'created') {
+    $orderby   = null;
+    $timeField = 'bDatetime';
 }
 
+$uID = $userservice->getCurrentUserId();
 $bs = SemanticScuttle_Service_Factory::get('Bookmark');
 
-$bookmarks = $bs->getBookmarks(0, 1, $userservice->getCurrentUserId(), null, null, $orderby);
+$bookmarks = $bs->getBookmarks(0, 1, $uID, null, null, $orderby);
+$lastDelete = $bs->getLastDelete($uID);
+
+// get time of most recent change (modification or deletion)
+//foreach is used in case there are no bookmarks
+$time = 0;
+foreach ($bookmarks['bookmarks'] as $row) {
+    $time = max( strtotime($row[$timeField]), strtotime($lastDelete) );
+}
 
 // Set up the XML file and output all the tags.
 echo '<?xml version="1.0" standalone="yes" ?' . ">\r\n";
-//foreach is used in case there are no bookmarks
-foreach ($bookmarks['bookmarks'] as $row) {
     echo '<update time="'
-        . gmdate('Y-m-d\TH:i:s\Z', strtotime($row[$timeField]))
+        . gmdate('Y-m-d\TH:i:s\Z', $time)
         . '"'
         . ' inboxnew="0"'
         . ' />';
-}
 ?>

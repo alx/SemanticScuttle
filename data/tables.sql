@@ -73,6 +73,7 @@ CREATE TABLE `sc_users` (
   `homepage` varchar(255) default NULL,
   `uContent` text,
   `privateKey` varchar(33) default NULL,
+  `bLastDelete` datetime NOT NULL default '0000-00-00 00:00:00',
   PRIMARY KEY  (`uId`),
   UNIQUE KEY `privateKey` (`privateKey`)
 ) CHARACTER SET utf8 COLLATE utf8_general_ci ;
@@ -200,4 +201,4 @@ CREATE TABLE `sc_votes` (
 CREATE TABLE `sc_version` (
   `schema_version` int(11) NOT NULL
 ) DEFAULT CHARSET=utf8;
-INSERT INTO `sc_version` (`schema_version`) VALUES ('6');
+INSERT INTO `sc_version` (`schema_version`) VALUES ('7');

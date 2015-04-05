@@ -4,6 +4,16 @@ Upgrading SemanticScuttle from a previous version
 
 .. contents::
 
+From version 0.98 to 0.99
+=========================
+Database updates
+----------------
+Apply ``data/schema/7.sql``
+
+    ALTER TABLE `sc_users` ADD `bLastDelete` DATETIME NOT NULL;
+    UPDATE `sc_version` SET `schema_version`='7';
+
+
 From version 0.94-0.98.1 to 0.98.3
 ==================================
 Run ``scripts/fix-unfiled-tags.php`` to fix old bookmarks that miss the
