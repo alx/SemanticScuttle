@@ -612,7 +612,12 @@ $menu2Tags = array(
     'menu2', 'tags', 'configurable', 'in', 'data/config.php'
 );
 
-
+/**
+ * Automatic tag extraction
+ *
+ * @var boolean
+ */
+$tagExtraction = true;
 
 /****************************
  * Search
@@ -655,7 +660,7 @@ $enableAdminColors = true;
  * a simple value "xxx" (like "author") automatically associates xxx with
  * [xxx][/xxx].
  * A complex value "xxx"=>"yyy" (like "address") directly
- * associates xxx with yyy. 
+ * associates xxx with yyy.
  *
  * @var array
  */
