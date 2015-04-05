@@ -699,7 +699,7 @@ class SemanticScuttle_Service_Bookmark extends SemanticScuttle_DbService
      * @param integer $enddate   Filter for creation date.
      *                           SQL-DateTime value
      *                           "YYYY-MM-DD hh:ii:ss'
-     * @param string  $hash      Filter by URL hash
+     * @param mixed   $hash      Filter by URL hash, may be an array of hashes or a single hash string
      *
      * @return array Array with two keys: 'bookmarks' and 'total'.
      *               First contains an array of bookmarks, 'total'
@@ -896,7 +896,14 @@ class SemanticScuttle_Service_Bookmark extends SemanticScuttle_DbService
 
         // Hash
         if ($hash) {
-            $query_4 .= ' AND B.bHash = "'. $hash .'"';
+            if (!is_array($hash)) {
+                $hash = array($hash);
+            }
+            $hash_query = array();
+            foreach ($hash as $h) {
+                $hash_query[] = ' B.bHash = "'. $h .'" ';
+            }
+            $query_4 .= ' AND ('. implode($hash_query, ' OR ') .') ';
         }
 
 

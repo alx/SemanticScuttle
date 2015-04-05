@@ -6,8 +6,8 @@
  * @param string  $url         URL of the bookmark (required)
  * @param string  $description Bookmark title (required)
  * @param string  $extended    Extended bookmark description (optional)
- * @param string  $tags        Space-separated list of tags (optional)
- * @param string  $dt          Date and time of bookmark creation (optional)
+ * @param string  $tags        comma delimited list of tags (optional)
+ * @param string  $dt          UTC Date and time of bookmark creation (optional)
  *                             Must be of format YYYY-MM-DDTHH:II:SSZ
  * @param integer $status      Visibility status (optional):
  *                             - 2 or 'private': Bookmark is totally private
@@ -20,7 +20,6 @@
  *                             same URL (optional)
  *
  * Notes:
- * - tags cannot have spaces
  * - URL and description (title) are mandatory
  * - delicious "description" is the "title" in SemanticScuttle
  * - delicious "extended" is the "description" in SemanticScuttle
@@ -74,7 +73,8 @@ if (isset($_REQUEST['tags']) && (trim($_REQUEST['tags']) != '')
 }
 
 if (isset($_REQUEST['dt']) && (trim($_REQUEST['dt']) != '')) {
-    $dt = trim($_REQUEST['dt']);
+    $date = new DateTime( trim($_REQUEST['dt']) , new DateTimeZone('UTC')); //adjust to UTC
+    $dt = date('Y-m-d\TH:i:s\Z', $date->getTimestamp());
 } else {
     $dt = null;
 }
@@ -135,7 +135,7 @@ if (is_null($url)) {
 
     if (!$exists) {
         $added = $bs->addBookmark(
-            $url, $description, $extended, '', $status, $tags, null, $dt, true
+            $url, $description, $extended, '', $status, $tags, null, $dt, false //false, because new API uses comma separated tags
         );
         $msg = 'done';
     }
