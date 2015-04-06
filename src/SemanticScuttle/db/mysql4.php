@@ -264,7 +264,7 @@ class sql_db
 			$query_id = $this->query_result;
 		}
 
-		if (isset($cache->sql_rowset[$query_id]))
+		if (isset($cache->sql_rowset[(int) $query_id]))
 		{
 			return $cache->sql_fetchrow($query_id);
 		}
@@ -281,13 +281,13 @@ class sql_db
 
 		if ($query_id)
 		{
-			unset($this->rowset[$query_id]);
-			unset($this->row[$query_id]);
+			unset($this->rowset[(int) $query_id]);
+			unset($this->row[(int) $query_id]);
 
 			$result = array();
-			while ($this->rowset[$query_id] = $this->sql_fetchrow($query_id))
+			while ($this->rowset[(int) $query_id] = $this->sql_fetchrow($query_id))
 			{
-				$result[] = $this->rowset[$query_id];
+				$result[] = $this->rowset[(int) $query_id];
 			}
 			return $result;
 		}
@@ -310,22 +310,22 @@ class sql_db
 			}
 			else
 			{
-				if (empty($this->row[$query_id]) && empty($this->rowset[$query_id]))
+				if (empty($this->row[(int) $query_id]) && empty($this->rowset[(int) $query_id]))
 				{
 					if ($this->sql_fetchrow($query_id))
 					{
-						$result = $this->row[$query_id][$field];
+						$result = $this->row[(int) $query_id][$field];
 					}
 				}
 				else
 				{
-					if ($this->rowset[$query_id])
+					if ($this->rowset[$id])
 					{
-						$result = $this->rowset[$query_id][$field];
+						$result = $this->rowset[$id][$field];
 					}
-					elseif ($this->row[$query_id])
+					elseif ($this->row[$id])
 					{
-						$result = $this->row[$query_id][$field];
+						$result = $this->row[$id][$field];
 					}
 				}
 			}
