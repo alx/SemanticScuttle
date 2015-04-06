@@ -7,10 +7,6 @@ echo " <a href=\"https://sourceforge.net/projects/semanticscuttle/\">SemanticScu
 echo T_("Using ");
 echo " <a href=\"https://github.com/rlehnhof/flat\">Flat 1.3.</a><br />";
 echo '<a href="'.createURL('about').'">'.T_('About').'</a><br />';
-if($GLOBALS['enableWebsiteThumbnails']) {
-	// Licence to the thumbnails provider (OBLIGATORY IF YOU USE ARTVIPER SERVICE)
-	echo ' (Thumbnails by <a href="http://www.artviper.net">webdesign</a>)';
-}
 ?>
 
 </div>
